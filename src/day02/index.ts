@@ -4,20 +4,20 @@ import path from "path";
 
 const input = fs.readFileSync(path.join(__dirname, "input.txt"), "utf8");
 
-const arrays: number[][] = input
+const reports: number[][] = input
   .split("\n")
   .map((line) => line.split(" ").map(Number));
 
 let safeSum: number = 0;
 
-for (const array of arrays) {
+function checkreport(report: number[]): boolean {
   let isSafe = true;
-  if (array[array.length - 1] > array[0]) {
-    for (let i = 1; i < array.length; i++) {
+  if (report[report.length - 1] > report[0]) {
+    for (let i = 1; i < report.length; i++) {
       if (
-        array[i] - array[i - 1] === 1 ||
-        array[i] - array[i - 1] === 2 ||
-        array[i] - array[i - 1] === 3
+        report[i] - report[i - 1] === 1 ||
+        report[i] - report[i - 1] === 2 ||
+        report[i] - report[i - 1] === 3
       ) {
         continue;
       } else {
@@ -25,12 +25,12 @@ for (const array of arrays) {
         break;
       }
     }
-  } else if (array[array.length - 1] < array[0]) {
-    for (let i = 1; i < array.length; i++) {
+  } else if (report[report.length - 1] < report[0]) {
+    for (let i = 1; i < report.length; i++) {
       if (
-        array[i - 1] - array[i] === 1 ||
-        array[i - 1] - array[i] === 2 ||
-        array[i - 1] - array[i] === 3
+        report[i - 1] - report[i] === 1 ||
+        report[i - 1] - report[i] === 2 ||
+        report[i - 1] - report[i] === 3
       ) {
         continue;
       } else {
@@ -40,9 +40,21 @@ for (const array of arrays) {
     }
   } else isSafe = false;
 
-  if (isSafe) {
+  return isSafe;
+}
+
+for (const report of reports) {
+  if (checkreport(report)) {
     safeSum += 1;
-    console.log(array);
+  } else {
+    for (let i = 0; i < report.length; i++) {
+      const shorterReport = [...report];
+      shorterReport.splice(i, 1);
+      if (checkreport(shorterReport)) {
+        safeSum += 1;
+        break;
+      }
+    }
   }
 }
 
